@@ -12,10 +12,10 @@ function Game (parentElement) {
     self.pastIndexes = [];
 
     //status elements
-    self.time = null;
-    self.score = null;
-    self.lives = null;
-    self.progress = null;
+    self.time = 10;
+    self.score = 0;
+    self.lives = 3;
+    self.progress = 0;
 
     //button options elements
     self.upWord = null;
@@ -26,10 +26,12 @@ function Game (parentElement) {
     self.synonims = ['of short duration','small','against','affect','puzzling','blameworthy','tragedy','applaud','rich','grow','uninteresting','awfull'];
     self.antonyms = ['prolonged','large','in favor off','block','clear','innocent','miracle','condemn','poor','compress','exciting','wonderfull'];
     
+    self.gameOn = false;
 }
 
 Game.prototype.build = function () {
     var self=this;
+
     self.gameScreenElement = `<div class="game"> 
         <div class="status">
             <p class="score">
@@ -43,7 +45,7 @@ Game.prototype.build = function () {
                 <span class="value">3</span></p>
             <p class="progress">
                 <span>Progress</span> 
-                <span class="value">0</span>%</p>
+                <span class="value">0</span></p>
         </div>
         <img class="baloon" src="styles/hot-air-balloon-svgrepo-com.svg">
         <div class="test">
@@ -54,41 +56,48 @@ Game.prototype.build = function () {
         </div>`;
 
     
+    
         //create the game state
     self.parentElement.html(self.gameScreenElement);
-    
-    //get the current vallue from the browser
-    self.time = $('.time .value').html();
-    self.score = $('.score .value').val();
-    self.lives = $('.lives .value').html();
-    self.progress = $('.progress .value').html();
 
-  }
+    self.gameOn =true;
+
+}
 
 Game.prototype.start = function () {
     var self=this;
     self.nextTurn();
 }
 
+Game.prototype.onEnded = function(cb) {
+    var self = this;
+    self.callback = cb;
+}
+  
 Game.prototype.nextTurn = function() {
     var self=this;
-    
+     
+    //check lives, progress
+    if (!self.checkContinuity()) {
+        return;
+    }
+
+    self.time=10;
+
+    //push the initial vallues to the browser
+    $('.score .value').html(self.score);
+    $('.time .value').html(self.time);
+    $('.lives .value').html(self.lives);
+    $('.progress .value').html(self.progress+"%");
+
     //get a random index and store it
     self.getRandomIndex();
-    
-    // self.randomIndex=Math.floor(Math.random()*self.words.length)
-    // self.pastIndexes.push(self.randomIndex);
 
     //random the choice between the buttons
+    self.getRandonOrderForAnswers(); 
     
-    var random=Math.round(Math.random());
-    if (random===0) {
-        self.upWord=self.synonims[self.randomIndex];
-        self.downWord=self.antonyms[self.randomIndex];
-    } else {
-        self.upWord=self.antonyms[self.randomIndex];
-        self.downWord=self.synonims[self.randomIndex];
-    }
+    //change color back to normal
+    $('.test button').css('background-color','rgba(223, 228, 224, 0.7)');
 
     //push the values on the screen
     $('.test .word').html(self.words[self.randomIndex]);
@@ -96,58 +105,80 @@ Game.prototype.nextTurn = function() {
     $('.test .upWord').html(self.upWord);
     $('.test .downWord').html(self.downWord);
 
+    //start the timer & update screen
+    self.intervalID = setInterval(checkTime, 1000);
+    console.log("srt interval: "+self.intervalID);
+
+    function checkTime() {
+        self.time--;
+        $('.time .value').html(self.time);
+        if (self.time<=0) {
+            clearInterval(self.intervalID);
+            self.progress+=10;
+            self.lives--;
+            self.nextTurn();
+        }
+    }
+
     //call function for click event
     self.handleUpClick = function () {
-        console.log(self.upWord);
-        self.checkAnswer(self.upWord);
+        self.checkAnswer(self.upWord,'upWord');
+        $('.test .upWord').off('click',self.handleUpClick);
+        $('.test .downWord').off('click',self.handleDownClick);
+        clearInterval(self.intervalID);
+        setTimeout(function() { self.nextTurn(); }, 300);
     }
+
     self.handleDownClick = function () {
-        console.log(self.downWord);
-        self.checkAnswer(self.downWord);
+        self.checkAnswer(self.downWord,'downWord');
+        $('.test .upWord').off('click',self.handleUpClick);
+        $('.test .downWord').off('click',self.handleDownClick);
+        clearInterval(self.intervalID);
+        setTimeout(function() { self.nextTurn(); }, 300);
     }
 
     //handle click events
     $('.test .upWord').on('click',self.handleUpClick);
     $('.test .downWord').on('click',self.handleDownClick);
 
-    //print update status
-    $('.score .value').html(self.score);
-    $('.lives .value').html(self.lives);
-    $('.progress .value').html(self.progress);    
-
-    //get another index
-    // self.getRandomIndex();
-    
 }
 
-Game.prototype.checkAnswer = function (guess){
+Game.prototype.getRandonOrderForAnswers = function() {
     var self=this;
-    console.log(guess);
-    console.log(self.synonims[self.randomIndex]);
-    if (guess===self.synonims[self.randomIndex]) {
-        self.nextTurn();
-        self.progress++;
-        self.score+=400*1;
-        console.log(self.score);
-    }else {
-        self.lives--;
-        // self.checkContinuity();
-        // self.nextTurn();
+    var zeroOrOne=Math.round(Math.random());
+
+    if (zeroOrOne===0) {
+        self.upWord=self.synonims[self.randomIndex];
+        self.downWord=self.antonyms[self.randomIndex];
+    } else {
+        self.upWord=self.antonyms[self.randomIndex];
+        self.downWord=self.synonims[self.randomIndex];
     }
 }
 
+Game.prototype.checkContinuity = function (){
+    var self=this;
+    if ((self.lives<=0)||(self.progress===100)){
+        self.gameOn=false;
+        clearInterval(self.intervalID);
+        self.callback();
+        return false;
+    }
+    return true;
+}
 
-// Game.prototype.correct = function () {
-
-// }
-
-// Game.prototype.wrong = function () {
-    
-// }
-
-// Game.prototype.tooSlow = function () {
-    
-// }
+Game.prototype.checkAnswer = function (guess,which){
+    var self=this;
+    if (guess===self.synonims[self.randomIndex]) {
+        $('.'+which).css('background-color','rgba(130, 191, 111, 0.7)');
+        self.progress+=10;
+        self.score+=400;
+    } else {
+        $('.'+which).css('background-color','rgba(233, 72, 88, 0.7)');
+        self.lives--;
+        self.progress+=10;
+    }
+}
 
 Game.prototype.destroy = function () {
     var self=this;
@@ -159,10 +190,11 @@ Game.prototype.getRandomIndex = function () {
     var self=this;
     var newIndex=Math.floor(Math.random()*self.words.length);
 
-        while (self.pastIndexes.includes(newIndex)){
-            newIndex=Math.floor(Math.random()*b.length);
-            }
-        self.randomIndex=newIndex;
-        self.pastIndexes.push(newIndex);
+    while (self.pastIndexes.includes(newIndex)){
+        newIndex=Math.floor(Math.random()*self.words.length);
+    }
+
+    self.randomIndex=newIndex;
+    self.pastIndexes.push(newIndex);
 
 }
