@@ -13,10 +13,6 @@ html {
     padding: 0;
   }
   
-  /* *{
-    border: 1px solid purple;
-  } */
-
   /* ---- typography ---- */
   
   body {
@@ -34,6 +30,7 @@ html {
   h1 {
     font-family: 'Roboto', sans-serif;
     letter-spacing: 0.2em;
+
   }
    
   p {
@@ -144,20 +141,12 @@ html {
   }
   
   .splash p{
-    text-shadow: 1px 1px 1px #fff;
+    text-shadow: 2px 1px 1px #fff;
     text-align: center;
     padding-top: 20px; 
     margin-bottom: 20px; 
   }
 
-
-  /* @media (min-width: 768px) {
-    .container {
-      font-size: 2em;
-      max-width: 728px;
-      margin: 0 auto;
-    }
-  } */
   /* ---- components game---- */
   .game {
     height:100%;
@@ -187,12 +176,6 @@ html {
   .game span{
     display: block;
   }
-
-  /* .game .baloon {
-    width:20%;
-    padding-top: 20px; 
-    margin-bottom: 20px; 
-  } */
 
   .game .test{
     max-height: 42vh;
@@ -253,9 +236,15 @@ html {
     margin-bottom: 20px;
   }
 
+  .game-over p{
+    text-align: center;
+    text-shadow: 2px 1px 1px #fff;
+    padding-top:80px;
+    margin-bottom:30px;
+  }
+
   /* ---- components splash ---- */
   canvas{
     position: absolute;
     z-index: -1;
-    /* background-color:rgba(255,255,0,0.3); */
   }

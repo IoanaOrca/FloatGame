@@ -71,14 +71,22 @@ function main() {
     gameOverScreenElement = ` <div class="game-over">
     <h1>GOOD GAME</h1>
     <button>Try Again!</button>
+    <p>Your score: <span class="score">0<span></p>
     </div>`;
+    // console.log($('.game-over h1'));
+   
     mainContentElement.html(gameOverScreenElement);
+
+    if (game.lives>0) $('.game-over h1').html('YOU WON');
+    $('.game-over .score').html(game.score);
+    console.log(game.score);
     restartGameButtonElement = $('button');
     restartGameButtonElement.on('click', handleRestartClick);
   }
 
 
   function destroyGameOverScreen() {
+    $('.canvas').css('background-color','rgba(233, 72, 88, 0)');
     mainContentElement.html('');
     restartGameButtonElement.off('click', handleRestartClick);
   }

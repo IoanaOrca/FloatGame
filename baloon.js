@@ -5,7 +5,6 @@ function Baloon() {
     var self=this;
 
     self.x = 0;
-    
     self.y = 0;
 
     self.canvas = null;
@@ -13,34 +12,44 @@ function Baloon() {
 
 
     self.setupImage();
+
+    self.baloonSize=0
 }
 
 Baloon.prototype.createCanvas = function(){
     var self=this;
 
     self.canvas = document.createElement("canvas");
+
     self.canvas.width = $('body').innerWidth();
-    self.x =Math.floor(self.canvas.width/2)-25;
     self.canvas.height = $('body').innerHeight();
-    self.y =Math.floor(self.canvas.height/20);9
+
+    if (self.canvas.width<700) self.baloonSize=80;
+        else if (self.canvas.width>1200) self.baloonSize=150;
+            else self.baloonSize=250;
+
+    self.x =Math.floor((self.canvas.width/2-self.baloonSize/2));
+    self.y =Math.floor(self.canvas.height/6);
+
     self.context = self.canvas.getContext("2d");
     $( self.canvas).insertAfter( $( ".status" ) );
 
-    // self.moveDown();
+
 }
 
 Baloon.prototype.setupImage = function () {
     var self=this;
     self.img = new Image();
-    self.img.src = 'styles/hot-air-balloon-svgrepo-com.svg';
+    self.img.src = 'styles/placeholder-1.png';
     self.img.onload = function() { 
-    //    self.createCanvas();
     }
 }
 
 Baloon.prototype.draw = function (){
     var self=this;
-    self.context.drawImage(self.img, self.x, self.y, 50, 50); 
+    
+    self.context.drawImage(self.img, self.x, self.y, self.baloonSize, self.baloonSize); 
+    self.context.fillStyle="#FF0000";
 }
 
 Baloon.prototype.clearCanvas = function () {
@@ -48,12 +57,5 @@ Baloon.prototype.clearCanvas = function () {
     self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
 }
 
-Baloon.prototype.moveDown = function (){
-    var self=this;
 
-    self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
-    self.y+=1;
-
-    
-}
 

@@ -22,13 +22,16 @@ function Game (parentElement) {
     self.downWord = null;
 
     //arrays of information elements
-    self.words = ['brief','tiny','opposed','influence','confuzing','guilty','disaster','praise','wealthy','expand','dull','horrible'];
-    self.synonims = ['of short duration','small','against','affect','puzzling','blameworthy','tragedy','applaud','rich','grow','uninteresting','awfull'];
-    self.antonyms = ['prolonged','large','in favor off','block','clear','innocent','miracle','condemn','poor','compress','exciting','wonderfull'];
+    self.words = ['brief','tiny','opposed','influence','confuzing','guilty','disaster','praise','wealthy','expand','dull','horrible','split','acuse','constructive','pollution','undermine'];
+    self.synonims = ['of short duration','small','against','affect','puzzling','blameworthy','tragedy','applaud','rich','grow','uninteresting','awfull','divide','blame','productive','contaminant','weaken'];
+    self.antonyms = ['prolonged','large','in favor off','block','clear','innocent','miracle','condemn','poor','compress','exciting','wonderfull','release','aquit','unproductive','cleanliness','reinforce'];
     
     self.gameOn = false;
 
-    self.baloon = new Baloon(150,30);
+    self.baloon = new Baloon();
+    self.altitude=1;
+
+    self.float=false;
 }
 
 Game.prototype.build = function () {
@@ -56,9 +59,9 @@ Game.prototype.build = function () {
         </div>
         </div>`;
 
-    //create the game state
+    
+     //create the game state
     self.parentElement.html(self.gameScreenElement);
-
     self.gameOn =true;
 
 }
@@ -66,8 +69,13 @@ Game.prototype.build = function () {
 Game.prototype.start = function () {
     var self=this;
     self.baloon.createCanvas();
+  
+//    self.baloon.draw();
+//    self.float=true;
+  
+   self.moveDownBaloon();
+
     self.nextTurn();
-    // var baloon = new Baloon(150, 30);
     
 }
 
@@ -75,7 +83,8 @@ Game.prototype.onEnded = function(cb) {
     var self = this;
     self.callback = cb;
 }
-  
+
+//MAIN GAME
 Game.prototype.nextTurn = function() {
     var self=this;
      
@@ -84,57 +93,51 @@ Game.prototype.nextTurn = function() {
         return;
     }
 
-    self.time=10;
+    //progress time for a turn
+    self.time=5;
+    self.altitude=1;
 
-    //push the initial vallues to the browser
+    //push the initial vallues of the status to the browser
     $('.score .value').html(self.score);
     $('.time .value').html(self.time);
     $('.lives .value').html(self.lives);
     $('.progress .value').html(self.progress+"%");
 
-    
-    
-    
-    // self.baloon.moveDown();
-    
-    //     requestAnimationFrame(function(){
-    //         self.moveDown();
-    //     });
-    
-
-    //get a random index and store it
+    //get a random index and store it - choosing the words
     self.getRandomIndex();
 
-    //random the choice between the buttons
+    //random the choice between the answer options
     self.getRandonOrderForAnswers(); 
     
-    //change color back to normal
+    //change color of the pushed button back to normal
+    $('canvas').css('background-color','rgba(233, 72, 88, 0)');
     $('.test button').css('background-color','rgba(223, 228, 224, 0.7)');
 
     //push the values on the screen
     $('.test .word').html(self.words[self.randomIndex]);
-        
+    
+    //add event listener for the button push
     $('.test .upWord').html(self.upWord);
     $('.test .downWord').html(self.downWord);
 
-    //start the timer & update screen
+    //start the interval for the timer
     self.intervalID = setInterval(checkTime, 1000);
-    //baloon.moveDown();
+
+    //the actual function of starting the interval for the timer
     function checkTime() {
         self.time--;
         $('.time .value').html(self.time);
         if (self.time<=0) {
-            self.baloon.clearCanvas();
             clearInterval(self.intervalID);
             self.progress+=10;
             self.lives--;
+            $('canvas').css('background-color','rgba(233, 72, 88, 0.1)');
             self.nextTurn();
         }
     }
 
-    //call function for click event
+    //call function for click event up
     self.handleUpClick = function () {
-        self.baloon.clearCanvas();
         self.checkAnswer(self.upWord,'upWord');
         $('.test .upWord').off('click',self.handleUpClick);
         $('.test .downWord').off('click',self.handleDownClick);
@@ -142,8 +145,8 @@ Game.prototype.nextTurn = function() {
         setTimeout(function() { self.nextTurn(); }, 300);
     }
 
+    //call function for click event up
     self.handleDownClick = function () {
-        self.baloon.clearCanvas();
         self.checkAnswer(self.downWord,'downWord');
         $('.test .upWord').off('click',self.handleUpClick);
         $('.test .downWord').off('click',self.handleDownClick);
@@ -155,6 +158,22 @@ Game.prototype.nextTurn = function() {
     $('.test .upWord').on('click',self.handleUpClick);
     $('.test .downWord').on('click',self.handleDownClick);
 
+}
+
+Game.prototype.moveDownBaloon = function (){
+    var self=this;
+
+    self.baloon.clearCanvas();
+    self.baloon.y+=self.altitude;
+    if(self.baloon.y<Math.floor(self.baloon.canvas.height/9)) self.altitude=1;
+    
+    self.baloon.draw();
+    
+        requestAnimationFrame(function(){
+            self.moveDownBaloon();
+        });
+    
+        
 }
 
 Game.prototype.getRandonOrderForAnswers = function() {
@@ -187,11 +206,14 @@ Game.prototype.checkAnswer = function (guess,which){
         $('.'+which).css('background-color','rgba(130, 191, 111, 0.7)');
         self.progress+=10;
         self.score+=400;
+        self.altitude=-10;
         return true;
     } else {
         $('.'+which).css('background-color','rgba(233, 72, 88, 0.7)');
         self.lives--;
+        $('canvas').css('background-color','rgba(233, 72, 88, 0.1)');
         self.progress+=10;
+        self.altitude=2;
         return false;
     }
 }
