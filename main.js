@@ -70,11 +70,9 @@ function main() {
   function buildGameOverScreen() {
     gameOverScreenElement = ` <div class="game-over">
     <h1>GOOD GAME</h1>
-    <button>Try Again!</button>
     <p>Your score: <span class="score">0<span></p>
+    <button>Try Again!</button>
     </div>`;
-    // console.log($('.game-over h1'));
-   
     mainContentElement.html(gameOverScreenElement);
 
     if (game.lives>0) $('.game-over h1').html('YOU WON');

@@ -69,14 +69,8 @@ Game.prototype.build = function () {
 Game.prototype.start = function () {
     var self=this;
     self.baloon.createCanvas();
-  
-//    self.baloon.draw();
-//    self.float=true;
-  
-   self.moveDownBaloon();
-
+    self.moveDownBaloon();
     self.nextTurn();
-    
 }
 
 Game.prototype.onEnded = function(cb) {
@@ -159,7 +153,6 @@ Game.prototype.nextTurn = function() {
     $('.test .downWord').on('click',self.handleDownClick);
 
 }
-
 Game.prototype.moveDownBaloon = function (){
     var self=this;
 
@@ -168,12 +161,9 @@ Game.prototype.moveDownBaloon = function (){
     if(self.baloon.y<Math.floor(self.baloon.canvas.height/9)) self.altitude=1;
     
     self.baloon.draw();
-    
         requestAnimationFrame(function(){
             self.moveDownBaloon();
         });
-    
-        
 }
 
 Game.prototype.getRandonOrderForAnswers = function() {
