@@ -27,6 +27,8 @@ function Game (parentElement) {
     self.antonyms = ['prolonged','large','in favor off','block','clear','innocent','miracle','condemn','poor','compress','exciting','wonderfull'];
     
     self.gameOn = false;
+
+    self.baloon = new Baloon(150,30);
 }
 
 Game.prototype.build = function () {
@@ -47,7 +49,6 @@ Game.prototype.build = function () {
                 <span>Progress</span> 
                 <span class="value">0</span></p>
         </div>
-        <img class="baloon" src="styles/hot-air-balloon-svgrepo-com.svg">
         <div class="test">
             <h1 class="word">Word</h1>
             <button class="upWord">Synonym</button>
@@ -55,9 +56,7 @@ Game.prototype.build = function () {
         </div>
         </div>`;
 
-    
-    
-        //create the game state
+    //create the game state
     self.parentElement.html(self.gameScreenElement);
 
     self.gameOn =true;
@@ -66,7 +65,10 @@ Game.prototype.build = function () {
 
 Game.prototype.start = function () {
     var self=this;
+    self.baloon.createCanvas();
     self.nextTurn();
+    // var baloon = new Baloon(150, 30);
+    
 }
 
 Game.prototype.onEnded = function(cb) {
@@ -90,6 +92,16 @@ Game.prototype.nextTurn = function() {
     $('.lives .value').html(self.lives);
     $('.progress .value').html(self.progress+"%");
 
+    
+    
+    
+    // self.baloon.moveDown();
+    
+    //     requestAnimationFrame(function(){
+    //         self.moveDown();
+    //     });
+    
+
     //get a random index and store it
     self.getRandomIndex();
 
@@ -107,12 +119,12 @@ Game.prototype.nextTurn = function() {
 
     //start the timer & update screen
     self.intervalID = setInterval(checkTime, 1000);
-    console.log("srt interval: "+self.intervalID);
-
+    //baloon.moveDown();
     function checkTime() {
         self.time--;
         $('.time .value').html(self.time);
         if (self.time<=0) {
+            self.baloon.clearCanvas();
             clearInterval(self.intervalID);
             self.progress+=10;
             self.lives--;
@@ -122,6 +134,7 @@ Game.prototype.nextTurn = function() {
 
     //call function for click event
     self.handleUpClick = function () {
+        self.baloon.clearCanvas();
         self.checkAnswer(self.upWord,'upWord');
         $('.test .upWord').off('click',self.handleUpClick);
         $('.test .downWord').off('click',self.handleDownClick);
@@ -130,6 +143,7 @@ Game.prototype.nextTurn = function() {
     }
 
     self.handleDownClick = function () {
+        self.baloon.clearCanvas();
         self.checkAnswer(self.downWord,'downWord');
         $('.test .upWord').off('click',self.handleUpClick);
         $('.test .downWord').off('click',self.handleDownClick);
@@ -173,10 +187,12 @@ Game.prototype.checkAnswer = function (guess,which){
         $('.'+which).css('background-color','rgba(130, 191, 111, 0.7)');
         self.progress+=10;
         self.score+=400;
+        return true;
     } else {
         $('.'+which).css('background-color','rgba(233, 72, 88, 0.7)');
         self.lives--;
         self.progress+=10;
+        return false;
     }
 }
 

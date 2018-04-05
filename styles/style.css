@@ -187,11 +187,12 @@ html {
   .game span{
     display: block;
   }
-  .game .baloon {
+
+  /* .game .baloon {
     width:20%;
     padding-top: 20px; 
     margin-bottom: 20px; 
-  }
+  } */
 
   .game .test{
     max-height: 42vh;
@@ -256,5 +257,5 @@ html {
   canvas{
     position: absolute;
     z-index: -1;
-    background-color:rgba(255,255,0,0.3);
+    /* background-color:rgba(255,255,0,0.3); */
   }
