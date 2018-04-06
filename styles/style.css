@@ -47,6 +47,9 @@ html {
   }
 
   @media (min-width: 1200px) {
+    body{
+      background-image: url('lemur-unsplash-l.jpg');
+    }
     h1{
       font-size:5rem;
     }
