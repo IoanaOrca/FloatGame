@@ -7,6 +7,7 @@
 **Game play:**
 
 **The user can** tap the matching word to keep the baloon floating.
+
 **Features:** the user wins 400 points if guessing the synonym inunder 5 seconds amnd pumps the air baloon up.
 
 **Chalenges:**
