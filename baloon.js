@@ -1,5 +1,5 @@
 'use strict'
-
+console.log('hey ya');
 
 function Baloon() {
     var self=this;
@@ -24,9 +24,9 @@ Baloon.prototype.createCanvas = function(){
     self.canvas.width = $('body').innerWidth();
     self.canvas.height = $('body').innerHeight();
 
-    if (self.canvas.width<700) self.baloonSize=80;
-        else if (self.canvas.width>1200) self.baloonSize=150;
-            else self.baloonSize=250;
+    if (self.canvas.width<700) self.baloonSize=150;
+        else if (self.canvas.width>1200) self.baloonSize=300;
+            else self.baloonSize=210;
 
     self.x =Math.floor((self.canvas.width/2-self.baloonSize/2));
     self.y =Math.floor(self.canvas.height/6);
