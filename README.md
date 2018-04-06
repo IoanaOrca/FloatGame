@@ -4,11 +4,9 @@
 
 ## **It's a** brain training game. Learn new words and expand your vocabulary.
 
-**Game play:**
+**Game play:** The user can tap the matching word to keep the baloon floating.
 
-**The user can** tap the matching word to keep the baloon floating.
-
-**Features:** the user wins 400 points if guessing the synonym inunder 5 seconds amnd pumps the air baloon up.
+**Features:** The user wins 400 points if guessing the synonym in under 5 seconds and pumps the air baloon up.
 
 **Chalenges:**
 
