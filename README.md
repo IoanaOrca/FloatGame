@@ -27,6 +27,6 @@ If I were to start from scratch I would spend more time building game architectu
 - design and CSS
 - add sounds and animations
 
-[Play the game!] (https://ioanaorca.github.io/FloatGame/)
+[Play the game!](https://ioanaorca.github.io/FloatGame/)
 
 
