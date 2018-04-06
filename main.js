@@ -70,7 +70,7 @@ function main() {
   function buildGameOverScreen() {
     gameOverScreenElement = ` <div class="game-over">
     <h1>GOOD GAME</h1>
-    <p>Your score: <span class="score">0<span></p>
+    
     <button>Try Again!</button>
     </div>`;
     mainContentElement.html(gameOverScreenElement);
@@ -94,4 +94,5 @@ function main() {
   buildSplashScreen();
 }
 
-$(document).ready(main);
+//$(document).ready(main);
+window.addEventListener('load', main);

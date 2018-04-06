@@ -12,9 +12,10 @@ function Game (parentElement) {
     self.pastIndexes = [];
 
     //status elements
-    self.time = 10;
+    self.maxLives = 3;
+    self.time = 5;
     self.score = 0;
-    self.lives = 3;
+    self.lives = self.maxLives;
     self.progress = 0;
 
     //button options elements
@@ -29,7 +30,7 @@ function Game (parentElement) {
     self.gameOn = false;
 
     self.baloon = new Baloon();
-    self.altitude=1;
+    self.altitude=0.3;
 
     self.float=false;
 }
@@ -70,6 +71,28 @@ Game.prototype.start = function () {
     var self=this;
     self.baloon.createCanvas();
     self.moveDownBaloon();
+
+
+    //call function for click event up
+    var handleUpClick = function () {
+        console.log('CLICKED!->UNBIND');
+        self.checkAnswer(self.upWord,'upWord');
+        setTimeout(function() { self.nextTurn(); }, 300);
+    }
+
+    //call function for click event up
+    var handleDownClick = function () {
+        console.log('CLICKED!->UNBIND');
+        self.checkAnswer(self.downWord,'downWord');
+        setTimeout(function() { self.nextTurn(); }, 300);
+    }
+
+    console.log('BIND!');
+
+    //handle click events
+    $('.test .upWord').on('click', handleUpClick);
+    $('.test .downWord').on('click', handleDownClick);
+
     self.nextTurn();
 }
 
@@ -78,9 +101,19 @@ Game.prototype.onEnded = function(cb) {
     self.callback = cb;
 }
 
+
+//MAIN GAME
+Game.prototype.getFallingDelta = function() {
+    var self = this;
+    return 0.3 + (self.maxLives - self.lives) * 0.3;
+};
+
 //MAIN GAME
 Game.prototype.nextTurn = function() {
     var self=this;
+
+    console.log(self.intervalID);
+    clearInterval(self.intervalID);
      
     //check lives, progress
     if (!self.checkContinuity()) {
@@ -89,7 +122,7 @@ Game.prototype.nextTurn = function() {
 
     //progress time for a turn
     self.time=5;
-    self.altitude=1;
+    self.altitude=self.getFallingDelta();
 
     //push the initial vallues of the status to the browser
     $('.score .value').html(self.score);
@@ -107,6 +140,11 @@ Game.prototype.nextTurn = function() {
     $('canvas').css('background-color','rgba(233, 72, 88, 0)');
     $('.test button').css('background-color','rgba(223, 228, 224, 0.7)');
 
+    $('.test button').attr('disabled','disabled');
+    setTimeout(function() {
+        $('.test button').attr('disabled', null);
+    }, 500);
+
     //push the values on the screen
     $('.test .word').html(self.words[self.randomIndex]);
     
@@ -116,54 +154,33 @@ Game.prototype.nextTurn = function() {
 
     //start the interval for the timer
     self.intervalID = setInterval(checkTime, 1000);
+    console.log(self.intervalID);
 
     //the actual function of starting the interval for the timer
     function checkTime() {
         self.time--;
         $('.time .value').html(self.time);
         if (self.time<=0) {
-            clearInterval(self.intervalID);
+            console.log(self.intervalID);
             self.progress+=10;
             self.lives--;
             $('canvas').css('background-color','rgba(233, 72, 88, 0.1)');
-            self.nextTurn();
+            setTimeout(function() { self.nextTurn(); }, 300);
         }
     }
-
-    //call function for click event up
-    self.handleUpClick = function () {
-        self.checkAnswer(self.upWord,'upWord');
-        $('.test .upWord').off('click',self.handleUpClick);
-        $('.test .downWord').off('click',self.handleDownClick);
-        clearInterval(self.intervalID);
-        setTimeout(function() { self.nextTurn(); }, 300);
-    }
-
-    //call function for click event up
-    self.handleDownClick = function () {
-        self.checkAnswer(self.downWord,'downWord');
-        $('.test .upWord').off('click',self.handleUpClick);
-        $('.test .downWord').off('click',self.handleDownClick);
-        clearInterval(self.intervalID);
-        setTimeout(function() { self.nextTurn(); }, 300);
-    }
-
-    //handle click events
-    $('.test .upWord').on('click',self.handleUpClick);
-    $('.test .downWord').on('click',self.handleDownClick);
-
 }
+
 Game.prototype.moveDownBaloon = function (){
     var self=this;
 
     self.baloon.clearCanvas();
     self.baloon.y+=self.altitude;
-    if(self.baloon.y<Math.floor(self.baloon.canvas.height/9)) self.altitude=1;
+    if(self.baloon.y<Math.floor(self.baloon.canvas.height/9)) self.altitude=self.getFallingDelta();
     
     self.baloon.draw();
-        requestAnimationFrame(function(){
-            self.moveDownBaloon();
-        });
+    requestAnimationFrame(function(){
+        self.moveDownBaloon();
+    });
 }
 
 Game.prototype.getRandonOrderForAnswers = function() {
@@ -182,8 +199,9 @@ Game.prototype.getRandonOrderForAnswers = function() {
 Game.prototype.checkContinuity = function (){
     var self=this;
     if ((self.lives<=0)||(self.progress===100)){
+        $('.test .upWord').off('click');
+        $('.test .downWord').off('click');
         self.gameOn=false;
-        clearInterval(self.intervalID);
         self.callback();
         return false;
     }

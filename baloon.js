@@ -1,5 +1,4 @@
 'use strict'
-console.log('hey ya');
 
 function Baloon() {
     var self=this;
@@ -41,8 +40,6 @@ Baloon.prototype.setupImage = function () {
     var self=this;
     self.img = new Image();
     self.img.src = 'styles/placeholder-1.png';
-    self.img.onload = function() { 
-    }
 }
 
 Baloon.prototype.draw = function (){
