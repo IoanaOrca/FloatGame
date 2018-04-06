@@ -11,8 +11,8 @@
 **Chalenges:**
 
 - media queries
-- structure canvas ontopof html
-- bulding game logic
+- structure canvas on top of html
+- bulding the game logic
 
 **Lessons learned:**
 
